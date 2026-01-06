@@ -97,7 +97,7 @@
         let top = 16;
 
         try {
-            if (anchorEl && anchorEl.getBoundingClientRect) {
+            if (anchorEl?.getBoundingClientRect) {
                 const r = anchorEl.getBoundingClientRect();
                 top = Math.round(r.bottom + 8);
                 left = Math.round(r.left);
@@ -142,7 +142,7 @@
             GM_setClipboard(text, "text");
             return;
         }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
+        if (navigator.clipboard?.writeText) {
             await navigator.clipboard.writeText(text);
             return;
         }
@@ -167,7 +167,7 @@
         CAP.resolve = null;
         CAP.reject = null;
         CAP.timer = null;
-        r && r(payload);
+        r?.(payload);
     }
 
     function startCapture(timeoutMs = 1800) {
@@ -199,7 +199,7 @@
     async function pickTextFromClipboardItems(items) {
         const prefer = ["text/markdown", "text/plain"];
         for (const item of items || []) {
-            const types = item && item.types ? item.types : [];
+            const types = item?.types ? item.types : [];
             for (const t of prefer) {
                 if (types.includes(t)) {
                     const blob = await item.getType(t);
@@ -215,8 +215,7 @@
         if (W.__geminiCopyAllHooksInstalled) return true;
         W.__geminiCopyAllHooksInstalled = true;
 
-        const clip =
-            W.navigator && W.navigator.clipboard ? W.navigator.clipboard : null;
+        const clip = W.navigator?.clipboard ? W.navigator.clipboard : null;
         if (!clip) return true;
 
         const origWriteText = clip.writeText ? clip.writeText.bind(clip) : null;
@@ -357,7 +356,7 @@
             await setClipboard(finalText);
             toast("已复制到剪贴板", anchorBtn);
         } catch (e) {
-            toast(`复制失败：${e && e.message ? e.message : e}`, anchorBtn);
+            toast(`复制失败：${e?.message ? e.message : e}`, anchorBtn);
         }
 
         if (btnTop) btnTop.disabled = false;
@@ -421,12 +420,11 @@
             NodeFilter.SHOW_TEXT,
             null,
         );
-        let n;
-        while ((n = walker.nextNode())) {
+        for (let n = walker.nextNode(); n; n = walker.nextNode()) {
             const parent = n.parentElement;
             if (!parent) continue;
-            if (parent.closest && parent.closest("mat-icon")) continue; // mat-icon 用 textContent 表示图标名
-            if (n.nodeValue && n.nodeValue.trim().length) n.nodeValue = "";
+            if (parent.closest?.("mat-icon")) continue; // mat-icon 用 textContent 表示图标名
+            if (n.nodeValue?.trim().length) n.nodeValue = "";
         }
     }
 
@@ -474,7 +472,9 @@
         sanitizeClonedButton(btn);
 
         try {
-            btn.querySelectorAll("img,svg").forEach((n) => n.remove());
+            btn.querySelectorAll("img,svg").forEach((n) => {
+                n.remove();
+            });
         } catch {}
 
         try {
