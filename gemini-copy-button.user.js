@@ -3,7 +3,7 @@
 // @namespace    https://github.com/zetaloop/gemini-copy-button
 // @homepage     https://github.com/zetaloop/gemini-copy-button
 // @author       zetaloop
-// @version      1.0.0
+// @version      1.0.1
 // @description  在 Gemini 顶栏加入“复制全对话”图标按钮：按 user/assistant 顺序拼接，复用 Gemini 内置复制结果；不做 HTML->Markdown 转换。
 // @match        https://gemini.google.com/*
 // @run-at       document-idle
@@ -445,11 +445,21 @@
     }
 
     function ensureTopBarButton() {
+        const center = findCenterSection();
+        const shouldHide =
+            !center ||
+            (center.children.length === 0 &&
+                !center.textContent?.trim().length);
+
         const exist = document.getElementById(ID_TOP);
         if (exist) {
+            exist.style.display = shouldHide ? "none" : "";
+            if (shouldHide) return;
             requestAnimationFrame(() => positionTopBarButton(exist));
             return;
         }
+
+        if (shouldHide) return;
 
         const root = findTopBarRoot();
         if (!root) return;
